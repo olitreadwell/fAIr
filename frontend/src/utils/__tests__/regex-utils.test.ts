@@ -50,6 +50,18 @@ describe("Regex Patterns", () => {
         "https://c.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=pk.abc123",
       ),
     ).toBe(true); // supports @2x suffix after {y}
+
+    expect(
+      XYZ_TILESERVER_URL_REGEX_PATTERN.test(
+        "https://tile.example.com/{z}/{x}/{x}",
+      ),
+    ).toBe(false); // {x} repeated, {y} missing entirely
+
+    expect(
+      XYZ_TILESERVER_URL_REGEX_PATTERN.test(
+        "https://tile.example.com/{z}/{y}/{y}",
+      ),
+    ).toBe(false); // {y} repeated, {x} missing entirely
   });
   it("TMS_TILESERVER_URL_REGEX_PATTERN matches valid TMS URLs", () => {
     expect(
