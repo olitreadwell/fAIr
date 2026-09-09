@@ -25,7 +25,7 @@
 - `2026-09-09` trivial-fix pass (typos) — outcome: **skipped (skip-requires-ai-disclosure)** — repo now requires AI disclosure in PR template (CONTRIBUTING + PR template, added 2026-09-08) AND has a CLA workflow; both are hard filters for the trivial loop. Genuine typos found (README roadmap table, docs/deployment.md, ADR docs, 3 frontend UI strings) but no PR opened per config hard filters. Lesson: re-check policy passport against live repo before picking; this repo's policy changed after the 2026-08-24 passport.
 
 ## Mined gaps (discovered, not yet attempted)
-- `2026-09-09` README roadmap table typos (estiamted/estiamed->estimated, provate->private, predcitions->predictions, publically->publicly, relsults->results, solap panels->solar panels, martial->materials, taks->tasks, Trainimg->Training, datalayers->data layers, an mapper->a mapper, May/Aug-Sept 206->2026) — status: proposed (blocked by AI-disclosure hard filter).
-- `2026-09-09` docs/deployment.md typos (prediciton->prediction, utilties->utilities) — status: proposed.
-- `2026-09-09` ADR docs typos (stying->styling x3, occassionally->occasionally, relavent->relevant) — status: proposed.
-- `2026-09-09` frontend UI string typos (intruction->instruction, crated->created, Occured->Occurred) — status: proposed.
+- `2026-09-09` README roadmap table typos (estiamted/estiamed->estimated, provate->private, predcitions->predictions, publically->publicly, relsults->results, solap panels->solar panels, martial->materials, taks->tasks, Trainimg->Training, datalayers->data layers, an mapper->a mapper, May/Aug-Sept 206->2026) — status: dropped (skip-requires-ai-disclosure).
+- `2026-09-09` docs/deployment.md typos (prediciton->prediction, utilties->utilities) — status: dropped (skip-requires-ai-disclosure).
+- `2026-09-09` ADR docs typos (stying->styling x3, occassionally->occasionally, relavent->relevant) — status: dropped (skip-requires-ai-disclosure).
+- `2026-09-09` frontend UI string typos (intruction->instruction, crated->created, Occured->Occurred) — status: dropped (skip-requires-ai-disclosure).
