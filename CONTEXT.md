@@ -1,5 +1,5 @@
 # hotosm/fAIr context
-> refreshed 2026-09-09 | upstream default: develop @ 44f70229
+> refreshed 2026-09-24 | upstream default: develop @ 06fa2917
 
 ## Identity & policies
 - upstream: hotosm/fAIr, default branch `develop`, primary language TypeScript (frontend) + Python (backend). English-first (yes).
@@ -23,6 +23,7 @@
 
 ## Gap ledger (dedupe — READ FIRST, never re-pick)
 - `2026-09-09` trivial-fix pass (typos) — outcome: **skipped (skip-requires-ai-disclosure)** — repo now requires AI disclosure in PR template (CONTRIBUTING + PR template, added 2026-09-08) AND has a CLA workflow; both are hard filters for the trivial loop. Genuine typos found (README roadmap table, docs/deployment.md, ADR docs, 3 frontend UI strings) but no PR opened per config hard filters. Lesson: re-check policy passport against live repo before picking; this repo's policy changed after the 2026-08-24 passport.
+- `2026-09-24` scheduled by engine/loop.sh (ANY repo type) — outcome: **skipped (skip-requires-ai-disclosure)** — re-verified LIVE against upstream develop @ 06fa2917: CONTRIBUTING "AI Tool Usage" section + PR template mandatory "AI Tool Usage" levels 0-5 checkbox still present, and `.github/workflows/contribution-agreement.yml` (hotosm/gh-workflows contributor_agreement) still requires a CLA sign-off on pull_request_target. Both are hard filters per config (`ai_policy_check.rules.ai_disclosure_required` -> skip-requires-ai-disclosure; CLA). No PR opened; no work invented. vetted-repos.jsonl passport corrected to match live (ai_disclosure_required + cla_required true). Lesson confirmed: a policy passport can go stale when a repo's policy changes after vetting; always re-check live before picking.
 
 ## Mined gaps (discovered, not yet attempted)
 - `2026-09-09` README roadmap table typos (estiamted/estiamed->estimated, provate->private, predcitions->predictions, publically->publicly, relsults->results, solap panels->solar panels, martial->materials, taks->tasks, Trainimg->Training, datalayers->data layers, an mapper->a mapper, May/Aug-Sept 206->2026) — status: dropped (skip-requires-ai-disclosure).
