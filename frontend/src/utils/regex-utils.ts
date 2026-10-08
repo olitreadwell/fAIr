@@ -1,8 +1,10 @@
 import { TileServiceType } from "@/enums";
 
-// Matches valid XYZ tile server URLs.
+// Matches valid XYZ tile server URLs. Accepts either axis order ({x}/{y} or
+// {y}/{x}, some servers like ArcGIS put y before x) but requires exactly one
+// {x} and one {y} placeholder, not the same one twice.
 export const XYZ_TILESERVER_URL_REGEX_PATTERN =
-  /^https?:\/\/[^\/]+(?:\/[^\/]+)*\/\{z\}\/\{(x|y)\}\/\{(x|y)\}(?:@[0-9a-z]+)?(?:\.(jpg|png|jpeg|webp))?(?:\?.*)?$/i;
+  /^https?:\/\/[^\/]+(?:\/[^\/]+)*\/\{z\}\/(?:\{x\}\/\{y\}|\{y\}\/\{x\})(?:@[0-9a-z]+)?(?:\.(jpg|png|jpeg|webp))?(?:\?.*)?$/i;
 
 // Matches valid TMS tile server URLs.
 export const TMS_TILESERVER_URL_REGEX_PATTERN =
