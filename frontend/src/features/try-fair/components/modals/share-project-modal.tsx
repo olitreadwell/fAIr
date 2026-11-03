@@ -5,6 +5,8 @@ import { SHOELACE_SIZES } from "@/enums";
 import { useStartMappingStore } from "@/features/try-fair/utils/start-mapping-store";
 import useCopyToClipboard from "@/hooks/use-clipboard";
 import { CheckIcon } from "@/components/ui/icons";
+import { APPLICATION_ROUTES } from "@/constants";
+import { matchPath, useLocation } from "react-router-dom";
 
 interface ShareProjectModalProps {
   isOpened?: boolean;
@@ -22,8 +24,18 @@ export const ShareProjectModal: React.FC<ShareProjectModalProps> = ({
 
   const isOpened = externalIsOpened ?? storeIsOpened;
   const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const location = useLocation();
 
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+  const sharePath = matchPath(
+    APPLICATION_ROUTES.TRY_FAIR_PROJECT,
+    location.pathname,
+  )
+    ? APPLICATION_ROUTES.TRY_FAIR
+    : location.pathname;
+  const currentUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${sharePath}${location.search}${location.hash}`
+      : "";
 
   const handleClose = () => {
     if (externalCloseDialog) {
@@ -46,7 +58,7 @@ export const ShareProjectModal: React.FC<ShareProjectModalProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-gray-border">
           <div className="flex items-center gap-2">
             <LinkIcon className="size-4 text-dark" />
-            <h3 className="text-sm font-semibold text-dark">Share</h3>
+            <h3 className="text-xs font-semibold text-dark">Share</h3>
           </div>
           <button
             type="button"
@@ -92,8 +104,8 @@ export const ShareProjectModal: React.FC<ShareProjectModalProps> = ({
         <div className="flex items-start gap-2 text-grey">
           <InfoIcon className="size-3.5 shrink-0 mt-0.5" />
           <p className="text-xs leading-relaxed">
-            Anyone with this link can open the same session — model, imagery,
-            resolution and parameters will all be restored.
+            Anyone with this link can open the same mapping setup — model,
+            imagery, resolution and parameters will all be restored.
           </p>
         </div>
       </div>

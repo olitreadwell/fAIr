@@ -33,6 +33,10 @@ type TDropdownMenuItem = {
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   /** Image URL icon (e.g. imported SVG asset) */
   imgSrc?: string;
+  /** Suffix icon component (e.g. checkmark icon) */
+  SuffixIcon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  /** Suffix React node */
+  suffix?: React.ReactNode;
 };
 export type DropdownMenuItem = TDropdownMenuItem & {
   subMenuItems?: TDropdownMenuItem[];
@@ -53,6 +57,8 @@ type DropDownProps = {
   multiSelect?: boolean;
   triggerComponent: React.ReactNode;
   distance?: number;
+  /** Offset along the trigger edge; useful for fine-tuning a placement. */
+  skidding?: number;
   disableCheveronIcon?: boolean;
   hoist?: boolean;
   sync?: "width" | "height" | "both";
@@ -74,6 +80,7 @@ const DropDown = forwardRef<SlDropdownType, DropDownProps>((props, ref) => {
     multiSelect = false,
     triggerComponent,
     distance = 20,
+    skidding = 0,
     disableCheveronIcon = false,
     hoist = false,
     sync,
@@ -143,6 +150,7 @@ const DropDown = forwardRef<SlDropdownType, DropDownProps>((props, ref) => {
       className={className}
       disabled={disabled}
       distance={distance}
+      skidding={skidding}
       hoist={hoist}
       stayOpenOnSelect={withCheckbox} // when selecting a single item, we can close the dropdown after selection.
     >
@@ -202,6 +210,18 @@ const DropDown = forwardRef<SlDropdownType, DropDownProps>((props, ref) => {
                     ></SlCheckbox>
                   )}
                   {menuItem.label ?? menuItem.value}
+                  {(menuItem.SuffixIcon || menuItem.suffix) && (
+                    <span
+                      slot="suffix"
+                      className="flex items-center justify-center"
+                    >
+                      {menuItem.SuffixIcon ? (
+                        <menuItem.SuffixIcon className="size-4" />
+                      ) : (
+                        menuItem.suffix
+                      )}
+                    </span>
+                  )}
                   {menuItem?.subMenuItems ? (
                     <SlMenu slot="submenu">
                       {menuItem.subMenuItems?.map((subMenuItem, id) => (

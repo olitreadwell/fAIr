@@ -61,7 +61,7 @@ export const IS_PROD = NODE_ENV === "production";
  * Default: false.
  */
 export const DISABLE_AUTH_ON_TRY_FAIR: boolean =
-  parseStringEnv(ENVS.DISABLE_AUTH_ON_TRY_FAIR, "true") === "true";
+  parseStringEnv(ENVS.DISABLE_AUTH_ON_TRY_FAIR, "false") === "true";
 
 // ==============================================================================================================================
 // API Endpoints
@@ -81,7 +81,7 @@ export const BASE_API_URL: string = parseStringEnv(
  */
 export const STAC_CATALOG_API_URL: string = parseStringEnv(
   ENVS.FAIR_STAC_CATALOG_BASE_URL,
-  "https://stac.fair.krschap.tech/stac/",
+  "https://stac.dev.ai.hotosm.org/",
 );
 
 /**
@@ -216,6 +216,20 @@ export const MIN_TRAINING_AREA_SIZE: number = parseIntEnv(
 );
 
 /**
+ * The maximum allowed area (in square kilometers) for a "Map Large Area"
+ * request. There is no minimum limit. Controlled by
+ * VITE_MAP_LARGE_AREA_MAX_SIZE_SQKM; defaults to 5000 km².
+ */
+export const MAP_LARGE_AREA_MAX_SIZE_SQKM: number = parseIntEnv(
+  ENVS.MAP_LARGE_AREA_MAX_SIZE_SQKM,
+  5000,
+);
+
+/** The same Map Large Area limit expressed in square meters (turf area unit). */
+export const MAP_LARGE_AREA_MAX_SIZE_SQM: number =
+  MAP_LARGE_AREA_MAX_SIZE_SQKM * 1_000_000;
+
+/**
  * The maximum file size (in bytes) allowed for training area upload.
  * The default is set to 1 MB.
  */
@@ -302,6 +316,14 @@ export const MAP_STYLES: Record<string, string | StyleSpecification> = {
       },
     },
     layers: [
+      // A neutral background under the raster tiles so the canvas isn't white
+      // before OSM tiles load (and during imagery layer swaps) — removes the
+      // white flash on refresh.
+      {
+        id: "background",
+        type: "background",
+        paint: { "background-color": "#e8e8e8" },
+      },
       {
         id: "simple-tiles",
         type: "raster",
@@ -323,8 +345,6 @@ export const TILE_BOUNDARY_SOURCE_ID: string = `${MAP_STYLES_PREFIX}-tile-bounda
 export const TMS_LAYER_ID: string = `${MAP_STYLES_PREFIX}-tileservice-layer`;
 export const TMS_SOURCE_ID: string = `${MAP_STYLES_PREFIX}-tileservice-source`;
 export const OSM_BASEMAP_LAYER_ID: string = `${MAP_STYLES_PREFIX}-osm-layer`;
-export const GOOGLE_SATELLITE_BASEMAP_LAYER_ID: string = `${MAP_STYLES_PREFIX}-google-statellite-layer`;
-export const GOOGLE_SATELLITE_BASEMAP_SOURCE_ID: string = `${MAP_STYLES_PREFIX}-google-satellite`;
 
 // Start Mapping
 export const ALL_MODEL_PREDICTIONS_SOURCE_ID: string = "all-predictions-source";
@@ -604,6 +624,17 @@ export const MAPSWIPE_AGREEMENT_OUTLINE_COLORS = {
 export const TRY_FAIR_GRID_SIZE = parseIntEnv(ENVS.TRY_FAIR_GRID_SIZE, 5);
 
 /**
+ * Toggles the animated camera "fly to" when the Try fAIr map fits to the grid
+ * (on imagery selection, refresh, and resolution changes). When "true" the
+ * camera eases to the grid; when "false" it jumps instantly (duration 0),
+ * which is useful for low-powered devices or to avoid motion.
+ *
+ * Controlled by VITE_TRY_FAIR_FLY_TO_ANIMATION. Defaults to "true" (animated).
+ */
+export const TRY_FAIR_FLY_TO_ANIMATION: boolean =
+  parseStringEnv(ENVS.TRY_FAIR_FLY_TO_ANIMATION, "true") === "true";
+
+/**
  * The URL to the production environment of fAIr.
  */
 export const FAIR_PROD_URL: string = parseStringEnv(
@@ -661,4 +692,10 @@ export const HOT_IMAGERY_COLLECTION_ID: string = parseStringEnv(
 export const NOMINATIM_API_URL: string = parseStringEnv(
   ENVS.NOMINATIM_API_URL,
   "https://nominatim.openstreetmap.org",
+);
+
+/** Maximum successful predictions retained in each mapping project. */
+export const PREDICTION_HISTORY_LIMIT = Math.max(
+  1,
+  parseIntEnv(ENVS.PREDICTION_HISTORY_LIMIT, 5),
 );

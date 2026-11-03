@@ -70,3 +70,8 @@ fair-app-data/*
 
 # helm charts
 fair-*.tgz
+.claude/
+
+# docs site (Zensical)
+.venv/
+/site/

@@ -6,6 +6,7 @@ import {
   MapIcon,
 } from "@/components/ui/icons";
 import { DropdownPlacement, TryFairMapOutputType } from "@/enums";
+import { useAuth } from "@/app/providers/auth-provider";
 import { useStartMappingStore } from "@/features/try-fair/utils/start-mapping-store";
 import {
   buildChoropleth,
@@ -13,7 +14,7 @@ import {
 } from "@/features/try-fair/utils/helpers";
 import { geoJSONDowloader } from "@/utils/geo/geo-utils";
 
-const getDownloadData = (
+export const getDownloadData = (
   predictions: GeoJSON.FeatureCollection,
   outputType: TryFairMapOutputType,
   predictionBBox: [number, number, number, number] | null,
@@ -35,11 +36,13 @@ const getDownloadData = (
 const ExportMapResults = () => {
   const {
     setDownloadType,
+    setShowSigninModal,
     predictions,
     outputType,
     predictionBBox,
     predictionGridZoom,
   } = useStartMappingStore();
+  const { isAuthenticated } = useAuth();
 
   const hasPredictions = Boolean(predictions?.features?.length);
 
@@ -61,6 +64,15 @@ const ExportMapResults = () => {
     setDownloadType(value);
   };
 
+  const handleMapLargeArea = () => {
+    if (!isAuthenticated) {
+      setShowSigninModal(true);
+      return;
+    }
+
+    handleSelect("large-area");
+  };
+
   const menuItems: DropdownMenuItem[] = [
     {
       label: "Download Map Result",
@@ -74,7 +86,7 @@ const ExportMapResults = () => {
       value: "large-area",
       Icon: MapIcon,
       dividerBefore: true,
-      onClick: () => handleSelect("large-area"),
+      onClick: handleMapLargeArea,
     },
   ];
 
@@ -85,7 +97,7 @@ const ExportMapResults = () => {
       disableCheveronIcon
       menuItems={menuItems}
       triggerComponent={
-        <button className="bg-[#687075] gap-3 px-3 flex text-white items-center !w-fit !h-10 md:min-w-fit !rounded-md min-w-[7.5rem]">
+        <button className="bg-[#687075] gap-3 px-3 flex text-white items-center !w-fit !h-8 md:min-w-fit !rounded-md min-w-[7.5rem]">
           Export
           <ChevronDownIcon className="size-4" />
         </button>

@@ -14,7 +14,6 @@ export const Corevalues = () => {
           <svg
             className={styles.svgIcon}
             viewBox="0 0 232 84"
-            preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -34,6 +33,7 @@ export const Corevalues = () => {
               fill="#D63F40"
             />
           </svg>
+
           <h1 className={styles.svgText}>
             {SHARED_CONTENT.homepage.coreValues.sectionTitle.secondSegment}
           </h1>

@@ -18,8 +18,6 @@ type UseTileGridOptions = {
   imageryCenter?: [number, number];
   /** Current resolution selection. */
   resolution?: TryFairResolution;
-  /** Selected model ID — triggers a re-center when it changes. */
-  modelId?: string | null;
   /** Callback fired whenever the snapped grid bbox changes. */
   onBBoxChange: (bbox: BBOX, tileZoom: number) => void;
 };
@@ -54,16 +52,14 @@ const bboxesAreEqual = (a: BBOX, b: BBOX): boolean =>
  * Consolidates the four separate recentering effects from the original
  * implementation into a single effect with explicit priority:
  *
- *   1. Model changed   → recenter (new imagery)
+ *   1. Imagery center changed → recenter on new center (including history restores)
  *   2. Resolution changed → recenter (grid size changes)
- *   3. Imagery center changed → recenter on new center
- *   4. No anchor yet    → initialize
+ *   3. No anchor yet → initialize
  */
 export const useTileGrid = ({
   map,
   imageryCenter,
   resolution,
-  modelId,
   onBBoxChange,
 }: UseTileGridOptions): UseTileGridReturn => {
   const [anchor, setAnchor] = useState<TileAnchor | null>(null);
@@ -71,7 +67,6 @@ export const useTileGrid = ({
 
   // ── Track previous values to detect what changed ─────────────────────────
 
-  const previousModelIdRef = useRef<string | null | undefined>(modelId);
   const previousResolutionRef = useRef<TryFairResolution | undefined>(
     resolution,
   );
@@ -88,7 +83,6 @@ export const useTileGrid = ({
   useEffect(() => {
     if (!map) return;
 
-    const modelChanged = modelId !== previousModelIdRef.current;
     const resolutionChanged = resolution !== previousResolutionRef.current;
     const imageryCenterChanged = centersAreDifferent(
       imageryCenter ?? null,
@@ -96,15 +90,15 @@ export const useTileGrid = ({
     );
 
     // Update refs for next comparison.
-    previousModelIdRef.current = modelId;
     previousResolutionRef.current = resolution;
     previousImageryCenterRef.current = imageryCenter;
 
-    if (modelChanged && modelId) {
-      const target = imageryCenter
-        ? { lng: imageryCenter[0], lat: imageryCenter[1] }
-        : map.getCenter();
-      const nextAnchor = computeCenteredAnchor(target, tileZoom);
+    // Imagery center resolved/changed — recenter on imagery.
+    if (imageryCenterChanged && imageryCenter) {
+      const nextAnchor = computeCenteredAnchor(
+        { lng: imageryCenter[0], lat: imageryCenter[1] },
+        tileZoom,
+      );
       setAnchor(nextAnchor);
       return;
     }
@@ -131,16 +125,6 @@ export const useTileGrid = ({
       return;
     }
 
-    // Imagery center resolved/changed — recenter on imagery.
-    if (imageryCenterChanged && imageryCenter) {
-      const nextAnchor = computeCenteredAnchor(
-        { lng: imageryCenter[0], lat: imageryCenter[1] },
-        tileZoom,
-      );
-      setAnchor(nextAnchor);
-      return;
-    }
-
     // Priority 4: No anchor yet (first render) — initialize.
     if (!anchor) {
       const target = imageryCenter
@@ -152,7 +136,7 @@ export const useTileGrid = ({
     // initialise when there's no anchor. Subsequent anchor updates are
     // driven by dragging, not by this effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, modelId, resolution, imageryCenter, tileZoom]);
+  }, [map, resolution, imageryCenter, tileZoom]);
 
   //
   // The old code called onBBoxChange on every fractional anchor update during

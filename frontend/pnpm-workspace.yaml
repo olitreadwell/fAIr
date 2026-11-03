@@ -1,0 +1,14 @@
+# Explicitly include this package for compatibility with pnpm 9.
+packages:
+  - "."
+
+# onlyBuiltDependencies is the pnpm 10 spelling of allowBuilds (pnpm 11);
+# both are needed while CI runs pnpm 10 and devs run pnpm 11.
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - "@hotosm/ui@1.0.0 || 1.0.1 || 2.0.0 || 2.1.0"
+  - "@hotosm/hanko-auth@0.5.5"
