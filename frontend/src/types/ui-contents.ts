@@ -1,4 +1,4 @@
-import { IconProps } from "./common";
+import { IconProps, TFAQs } from "./common";
 // Models related pages content types starts.
 
 export type TModelsContent = {
@@ -404,20 +404,7 @@ export type TSharedContent = {
     faqs: {
       sectionTitle: string;
       cta: string;
-      content: [
-        {
-          question: string;
-          answer: string;
-        },
-        {
-          question: string;
-          answer: string;
-        },
-        {
-          question: string;
-          answer: string;
-        },
-      ];
+      content: TFAQs;
     };
     tagline: {
       firstSegment: string;
@@ -604,6 +591,7 @@ export type TAboutPageContent = {
     firstParagraph: string;
     secondParagraph: string;
   };
+  documentationLink: string;
 };
 
 // About page content types ends.
@@ -830,6 +818,7 @@ export type TTryFairPageContent = {
     parameters: {
       label: string;
       description: string;
+      advancedModeDescription: string;
       learnMore: string;
       resolution: {
         label: string;

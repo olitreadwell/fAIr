@@ -25,7 +25,7 @@ export const TryFairChoroplethLegend = ({
     <Legend
       position="bottom-right"
       title={title}
-      subtitle="Buildings per cell"
+      subtitle="Features per cell"
       items={items}
     />
   );

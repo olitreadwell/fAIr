@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 
 import boto3
 import dj_database_url
+from botocore.config import Config
 from corsheaders.defaults import default_headers
 from pydantic import SecretStr
 
@@ -31,8 +32,9 @@ if settings.enable_sentry:
 LOG_PATH = str(settings.log_path)
 os.makedirs(LOG_PATH, exist_ok=True)
 
-FRONTEND_URL = str(settings.frontend_url)
-API_BASE_URL = str(settings.api_base_url)
+# AnyHttpUrl appends a trailing slash to a bare host, which breaks f-string joins.
+FRONTEND_URL = str(settings.frontend_url).rstrip("/")
+API_BASE_URL = str(settings.api_base_url).rstrip("/")
 HOSTNAME = settings.hostname
 
 RAW_DATA_API_URL = str(settings.raw_data_api_url)
@@ -47,7 +49,7 @@ if settings.auth_provider is AuthProvider.HANKO:
     COOKIE_DOMAIN = settings.cookie_domain
     COOKIE_SECURE = settings.cookie_secure if settings.cookie_secure is not None else not DEBUG
     JWT_AUDIENCE = settings.jwt_audience
-    LOGIN_URL = str(settings.login_url)
+    LOGIN_URL = str(settings.login_url).rstrip("/")
     OSM_REDIRECT_URI = _str(settings.osm_login_redirect_uri)
     LOGIN_INTERNAL_API_KEY = _secret(settings.login_internal_api_key) or ""
     LOGIN_BACKEND_URL = _str(settings.login_backend_url) or LOGIN_URL
@@ -72,6 +74,9 @@ FAIR_STAC_API_URL = (
     _str(settings.fair_stac_api_url).rstrip("/") if settings.fair_stac_api_url else None
 )
 FAIR_STAC_API_KEY = _secret(settings.fair_stac_api_key)
+FAIR_STAC_DSN = _secret(settings.fair_stac_dsn)
+
+KNATIVE_SERVICE_TEMPLATE = str(BASE_DIR / "modelregistry" / "knative-service.yaml")
 
 BUCKET_NAME = settings.bucket_name
 PARENT_BUCKET_FOLDER = settings.parent_bucket_folder
@@ -81,6 +86,7 @@ AWS_SECRET_ACCESS_KEY = _secret(settings.aws_secret_access_key)
 AWS_ENDPOINT_URL = _str(settings.aws_endpoint_url)
 PRESIGNED_URL_EXPIRY = settings.presigned_url_expiry
 
+_S3_CONFIG = Config(signature_version="s3v4")
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
     S3_CLIENT = boto3.client(
         "s3",
@@ -88,9 +94,12 @@ if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         region_name=AWS_REGION,
         endpoint_url=AWS_ENDPOINT_URL,
+        config=_S3_CONFIG,
     )
 else:
-    S3_CLIENT = boto3.client("s3", region_name=AWS_REGION, endpoint_url=AWS_ENDPOINT_URL)
+    S3_CLIENT = boto3.client(
+        "s3", region_name=AWS_REGION, endpoint_url=AWS_ENDPOINT_URL, config=_S3_CONFIG
+    )
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -116,6 +125,7 @@ INSTALLED_APPS = [
     "feedback",
     "notifications",
     "stars",
+    "userstate",
     "system",
 ]
 
@@ -267,6 +277,8 @@ _log_handlers: dict[str, Any] = {
     "console": {
         "level": "DEBUG" if DEBUG else "INFO",
         "class": "logging.StreamHandler",
+        # stdout: ZenML records anything written to stderr as ERROR.
+        "stream": "ext://sys.stdout",
         "formatter": "simple",
     },
 }
@@ -304,13 +316,16 @@ TASKS = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "fair-locmem",
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache",
+        # Culling evicts the lowest keys first, and STAC keys sort before throttle keys.
+        "OPTIONS": {"MAX_ENTRIES": 10000},
     },
 }
 
 CACHE_TIMEOUT_MINUTES = settings.cache_timeout_minutes
 LOG_LINE_STREAM_TRUNCATE_VALUE = settings.log_line_stream_truncate_value
+USER_STATE_MAX_BYTES = settings.user_state_max_bytes
 
 HEALTH_PROBE_TIMEOUT = settings.health_probe_timeout
 PREDICTION_SYNC_INTERVAL = settings.prediction_sync_interval
@@ -344,6 +359,7 @@ SPECTACULAR_SETTINGS = {
         {"name": "notifications", "description": "Per-user notification feed."},
         {"name": "workspace", "description": "S3 listing + presigned URLs."},
         {"name": "stars", "description": "Anonymous-friendly star/unstar."},
+        {"name": "user-state", "description": "Per-user frontend state, private to its owner."},
         {"name": "system", "description": "Health + dependency probes."},
     ],
     "SWAGGER_UI_SETTINGS": {

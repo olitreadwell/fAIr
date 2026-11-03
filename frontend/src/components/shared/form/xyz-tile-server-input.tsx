@@ -170,7 +170,7 @@ export const XYZTileServerInput = ({
                 rounded
                 className="!w-fit"
               >
-                Apply
+                Use this image
               </Button>
             </span>
           </ToolTip>

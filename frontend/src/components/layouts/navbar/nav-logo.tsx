@@ -18,10 +18,10 @@ export const NavLogo = ({}: { onClick?: () => void }) => {
       <Image
         src={fAIrLogo}
         alt={SHARED_CONTENT.navbar.logoAlt}
-        className={"size-8 md:size-10"}
+        className={"size-8 md:size-8"}
       />
       <p
-        className={`font-barlow font-bold text-dark leading-[1.2] text-body-1 md:text-title-2`}
+        className={`font-bold font-barlow text-dark leading-[1.2] text-body-1 md:text-title-2`}
       >
         fAIr
       </p>

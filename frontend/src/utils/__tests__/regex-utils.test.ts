@@ -6,6 +6,7 @@ import {
   VALID_MODEL_CHECKPOINT_PATH,
   OPENAERIALMAP_TILESERVER_URL_REGEX_PATTERN,
 } from "@/utils/regex-utils";
+import { extractTileJSONURL } from "@/utils/string-utils";
 
 import { describe, it, expect } from "vitest";
 
@@ -50,6 +51,18 @@ describe("Regex Patterns", () => {
         "https://c.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token=pk.abc123",
       ),
     ).toBe(true); // supports @2x suffix after {y}
+
+    expect(
+      XYZ_TILESERVER_URL_REGEX_PATTERN.test(
+        "https://tile.example.com/{z}/{x}/{x}",
+      ),
+    ).toBe(false); // {x} repeated, {y} missing entirely
+
+    expect(
+      XYZ_TILESERVER_URL_REGEX_PATTERN.test(
+        "https://tile.example.com/{z}/{y}/{y}",
+      ),
+    ).toBe(false); // {y} repeated, {x} missing entirely
   });
   it("TMS_TILESERVER_URL_REGEX_PATTERN matches valid TMS URLs", () => {
     expect(
@@ -144,5 +157,20 @@ describe("Regex Patterns", () => {
         "http://tiles.openaerialmap.org/abc123/1/xyz456/{z}/{x}/{y}",
       ),
     ).toBe(false);
+    expect(
+      OPENAERIALMAP_TILESERVER_URL_REGEX_PATTERN.test(
+        "https://api.imagery.hotosm.org/raster/collections/openaerialmap/items/670683fa445f52000147951b/tiles/WebMercatorQuad/{z}/{x}/{y}?assets=visual&nodata=0",
+      ),
+    ).toBe(true);
+  });
+
+  it("converts HOT OpenAerialMap raster tile URLs to TileJSON URLs", () => {
+    expect(
+      extractTileJSONURL(
+        "https://api.imagery.hotosm.org/raster/collections/openaerialmap/items/670683fa445f52000147951b/tiles/WebMercatorQuad/{z}/{x}/{y}?assets=visual&nodata=0",
+      ),
+    ).toBe(
+      "https://api.imagery.hotosm.org/raster/collections/openaerialmap/items/670683fa445f52000147951b/WebMercatorQuad/tilejson.json?assets=visual&tilesize=256",
+    );
   });
 });

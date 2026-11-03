@@ -7,11 +7,11 @@ import { SolarPanelIcon } from "@/components/ui/icons/solar-panel-icon";
 import { SwimmingPoolIcon } from "@/components/ui/icons/swimming-pool-icon";
 import { TreesIcon } from "@/components/ui/icons/trees-icon";
 import {
-  FeatureToMapItem,
   useGetAPIBaseModels,
   useGetAPILocalModels,
   useGetFeaturesToMap,
 } from "@/features/try-fair/api/features-to-map";
+import { FeatureToMapItem } from "@/features/try-fair/types/data-types";
 import { useDropdownMenu } from "@/hooks/use-dropdown-menu";
 import { IconProps } from "@/types";
 import { cn } from "@/utils";
@@ -65,7 +65,7 @@ const FeatureOption = ({
       title={
         hasNoModels ? "No models are available for this feature" : undefined
       }
-      className="text-dark bg-[#FAFAFA] hover:bg-gray-100 rounded-lg flex justify-between items-center w-full py-3 px-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#FAFAFA]"
+      className="text-dark bg-gray-white hover:bg-gray-100 rounded-lg flex justify-between items-center w-full py-3 px-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-gray-white"
       onClick={() => onSelect(feature.slug)}
     >
       <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ const FeatureToMapDropdown = ({
   const trigger = (
     <div
       className={cn(
-        "flex bg-[#FAFAFA] border w-full md:w-[280px] p-2 rounded-md border-gray-border justify-between items-center transition-opacity",
+        "flex bg-gray-white border w-full md:w-[280px] p-2 rounded-md border-gray-border justify-between items-center transition-opacity",
         disabled || isLoading
           ? "opacity-50 cursor-not-allowed"
           : "cursor-pointer",
@@ -110,9 +110,7 @@ const FeatureToMapDropdown = ({
         <p className="text-xs text-dark">{selectedFeature.label}</p>
       </div>
       <ChevronDownIcon
-        className={`w-4 h-4 shrink-0 text-grey transition-transform ${
-          isOpen ? "rotate-180" : ""
-        }`}
+        className={`w-4 h-4 shrink-0 text-grey transition-transform ${isOpen ? "rotate-180" : ""}`}
       />
     </div>
   );

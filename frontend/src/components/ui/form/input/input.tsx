@@ -126,7 +126,7 @@ const Input: React.FC<InputProps> = ({
           currentLength={currentLength}
         />
       )}
-      {/* 
+      {/*
         We're using the native browser date picker. 
         In chrome it displays a calender icon which unfortunately could not be customized as at 08/10/2024.
         So we're using our custom calender icon in other browsers, but using the native calender in chrome.

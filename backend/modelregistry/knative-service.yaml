@@ -1,0 +1,44 @@
+# fair-py-ops fills model-specific fields from STAC during registration.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: model
+  namespace: predict
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "5"
+        autoscaling.knative.dev/scale-down-delay: "60s"
+    spec:
+      containerConcurrency: 1
+      containers:
+        - image: model
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          envFrom:
+            - secretRef:
+                name: s3-credentials
+                optional: true
+          env:
+            # Keep ONNX Runtime within the pod's CPU limit.
+            - name: FAIR_KNATIVE_ONNX_THREADS
+              value: "2"
+            - name: FAIR_KNATIVE_CORS_ORIGINS
+              value: "*"
+            - name: FAIR_KNATIVE_CORS_METHODS
+              value: "*"
+            - name: FAIR_KNATIVE_CORS_HEADERS
+              value: "*"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 3Gi

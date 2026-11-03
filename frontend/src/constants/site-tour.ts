@@ -12,6 +12,9 @@ export const APP_TOUR_IDS = {
   TRY_FAIR_MAP_BUTTON_TOOLTIP: "try-fair-map-button-tooltip",
   TRY_FAIR_START_MAPPING_BUTTON: "try-fair-start-mapping-button",
   TRY_FAIR_DOWNLOAD_PREDICTIONS_BUTTON: "try-fair-download-predictions-button",
+  TRY_FAIR_MAPPING_MODE: "try-fair-mapping-mode",
+  TRY_FAIR_SHARE_BUTTON: "try-fair-share-button",
+  TRY_FAIR_MAP_LARGE_AREA_BUTTON: "try-fair-map-large-area-button",
 };
 
 export const APP_TOUR_STEPS = [
@@ -58,6 +61,16 @@ export const getTryFairGuidedTourSteps = (
   isSmallViewport: boolean,
 ): StepType[] => [
   {
+    selector: `#${APP_TOUR_IDS.TRY_FAIR_MAPPING_MODE}`,
+    content:
+      "Switch between Basic and Advanced mapping modes to unlock more tools and settings.",
+    position: "bottom",
+    styles: {
+      popover: popoverStyle,
+      maskWrapper: hideMask,
+    },
+  },
+  {
     selector: `#${APP_TOUR_IDS.TRY_FAIR_MAP_BUTTON_TOOLTIP}`,
     content: "Click Map to run a prediction over the highlighted grid.",
     position: isSmallViewport ? "top" : "right",
@@ -69,8 +82,8 @@ export const getTryFairGuidedTourSteps = (
   {
     selector: `#${APP_TOUR_IDS.TRY_FAIR_PARAMETERS}`,
     content:
-      "Adjust confidence and resolution to explore how prediction output changes.",
-    position: isSmallViewport ? "top" : "bottom",
+      "Adjust accuracy and size to explore how prediction output changes.",
+    position: isSmallViewport ? "top" : "right",
     styles: {
       popover: popoverStyle,
       maskWrapper: hideMask,
@@ -98,12 +111,31 @@ export const getTryFairGuidedTourSteps = (
       maskWrapper: hideMask,
     },
   },
+  {
+    selector: `#${APP_TOUR_IDS.TRY_FAIR_SHARE_BUTTON}`,
+    content:
+      "Share your current view and results with others using a shareable link.",
+    position: isSmallViewport ? "top" : "bottom",
+    styles: {
+      popover: popoverStyle,
+      maskWrapper: hideMask,
+    },
+  },
+  {
+    selector: `#${APP_TOUR_IDS.TRY_FAIR_MAP_LARGE_AREA_BUTTON}`,
+    content:
+      'Use "Map an area" to map a large area beyond the preview grid. Draw or upload an area, or select the whole imagery, then submit a Map Request.',
+    position: isSmallViewport ? "top" : "bottom",
+    styles: {
+      popover: popoverStyle,
+      maskWrapper: hideMask,
+    },
+  },
 ];
 
 export const getTryFairStartMappingStep = (): StepType => ({
   selector: `#${APP_TOUR_IDS.TRY_FAIR_START_MAPPING_BUTTON}`,
-  content:
-    "Ready for full mapping? Click Start Mapping to access advanced tools.",
+  content: "Ready for full mapping? Click login to access advanced tools.",
   styles: {
     close: (base) => ({ ...base, right: 12, top: 12 }),
     maskWrapper: hideMask,
